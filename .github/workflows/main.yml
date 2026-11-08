@@ -19,11 +19,12 @@ jobs:
 
     - name: Install Syft
       run: |
-        curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+        # GitHub Releases downloads returned 504 on 2026-11-08 -> use the Docker Hub image instead
+        docker pull anchore/syft:latest
 
     - name: Generate SBOM
       run: |
-        syft docker.io/kodekloud/webapp-color:latest -o spdx-json > spdx.json
+        docker run --rm anchore/syft:latest docker.io/kodekloud/webapp-color:latest -o spdx-json > spdx.json
 
     - name: Upload SBOM Artifact
       uses: actions/upload-artifact@v4
